@@ -1,0 +1,125 @@
+CREATE DATABASE banco_usuario;
+
+USE banco_usuario;
+
+
+
+CREATE TABLE cliente;
+
+  ( 
+     id          INT(11) NOT NULL AUTO_INCREMENT, 
+     nome        VARCHAR(300), 
+     cpf         VARCHAR(14), 
+     datanasc    DATE, 
+     rg          VARCHA(14), 
+     email       VARCHAR(300), 
+     senha       VARCHAR(50), 
+     fk_endereco INT,
+     PRIMARY KEY (id) 
+  ); 
+
+CREATE TABLE endereco 
+  ( 
+     id            INT PRIMARY KEY, 
+     nome          VARCHAR(300), 
+     uf            VARCHAR(150), 
+     cidade        VARCHAR(150), 
+     rua           VARCHAR(150), 
+     numero        VARCHAR(15), 
+     cep           VARCHAR(8), 
+     complemento   VARCHAR(150), 
+     referencia    VARCHAR(14), 
+     fk_cliente_id INT, 
+     fk_empresa_id INT 
+  ); 
+
+CREATE TABLE empresa 
+  ( 
+     id          INT PRIMARY KEY, 
+     nome        VARCHAR(300), 
+     cnpj        VARCHA(18), 
+     email       VARCHAR(300), 
+     senha       VARCHAR(50), 
+     telefone    VARCHA(13), 
+     fk_endereco INT 
+  ); 
+
+CREATE TABLE pedido 
+  ( 
+     id             INT PRIMARY KEY, 
+     situacao       VARCHAR(100), 
+     precofinal     FLOAT, 
+     fk_empresa     INT, 
+     fk_cliente     INT, 
+     fk_endereco_id INT 
+  ); 
+
+CREATE TABLE itens_pedido 
+  ( 
+     id         INT PRIMARY KEY, 
+     fk_produto INT, 
+     fk_compra  INT 
+  ); 
+
+CREATE TABLE produtos 
+  ( 
+     id         INT PRIMARY KEY, 
+     nome       VARCHAR(300), 
+     descricao  TEXT(800), 
+     preco      FLOAT, 
+     fk_empresa INT 
+  ); 
+
+CREATE TABLE tem 
+  ( 
+     fk_empresa_id  INT, 
+     fk_produtos_id INT 
+  ); 
+
+CREATE TABLE pertence 
+  ( 
+     fk_itens_pedido_id INT, 
+     fk_pedido_id       INT 
+  ); 
+
+CREATE TABLE esta_contido 
+  ( 
+     fk_produtos_id     INT, 
+     fk_itens_pedido_id INT 
+  ); 
+
+ALTER TABLE endereco 
+  ADD CONSTRAINT fk_endereco_2 FOREIGN KEY (fk_cliente_id) REFERENCES cliente ( 
+  id) ON DELETE RESTRICT; 
+
+ALTER TABLE endereco 
+  ADD CONSTRAINT fk_endereco_3 FOREIGN KEY (fk_empresa_id) REFERENCES empresa ( 
+  id) ON DELETE RESTRICT; 
+
+ALTER TABLE pedido 
+  ADD CONSTRAINT fk_pedido_2 FOREIGN KEY (fk_endereco_id) REFERENCES endereco ( 
+  id) ON DELETE CASCADE; 
+
+ALTER TABLE tem 
+  ADD CONSTRAINT fk_tem_1 FOREIGN KEY (fk_empresa_id) REFERENCES empresa (id) ON 
+  DELETE RESTRICT; 
+
+ALTER TABLE tem 
+  ADD CONSTRAINT fk_tem_2 FOREIGN KEY (fk_produtos_id) REFERENCES produtos (id) 
+  ON DELETE RESTRICT; 
+
+ALTER TABLE pertence 
+  ADD CONSTRAINT fk_pertence_1 FOREIGN KEY (fk_itens_pedido_id) REFERENCES 
+  itens_pedido (id) ON DELETE SET NULL; 
+
+ALTER TABLE pertence 
+  ADD CONSTRAINT fk_pertence_2 FOREIGN KEY (fk_pedido_id) REFERENCES pedido (id) 
+  ON DELETE SET NULL; 
+
+ALTER TABLE esta_contido 
+  ADD CONSTRAINT fk_esta_contido_1 FOREIGN KEY (fk_produtos_id) REFERENCES 
+  produtos (id) ON DELETE RESTRICT; 
+
+ALTER TABLE esta_contido 
+  ADD CONSTRAINT fk_esta_contido_2 FOREIGN KEY (fk_itens_pedido_id) REFERENCES 
+  itens_pedido (id) ON DELETE SET NULL; 
